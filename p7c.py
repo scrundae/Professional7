@@ -2,8 +2,15 @@ import re
 import sys
 
 KEYWORDS = {
-    'Function': 'void',  
+    'Sub': 'void',  
     'Integer': 'int',
+    'Character': 'char',
+    'While': 'while',
+    'Do': 'do',
+    'Match': 'match',
+    'Case': 'case',
+    'Default': 'default',
+    'Proceed': 'continue',
     'Start': '{',
     'End': '}',
     'If': 'if',
@@ -14,6 +21,7 @@ KEYWORDS = {
     'Private': 'private',
     'Protected': 'protected',
     'Bucket': 'class',
+
 }
 
 def convert_to_c(pseudo_code, keywords):

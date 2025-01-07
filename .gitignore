@@ -1,1 +1,3 @@
 *.cpp
+*.pr7
+__pycache__

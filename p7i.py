@@ -3,7 +3,9 @@
 import sys
 import ProLex
 import ProSaladIB as salad
+import json
 
+RtVal = None
 
 class interpreter:
     def __init__(self):
@@ -13,6 +15,7 @@ class interpreter:
         ftext = f.read()
         self.execute_code(ftext)
     def execute_code(self, code):
+        global RtVal
         for line in code.split('\n'):
             flex = ProLex.lexicate(line)
             print(flex)
@@ -22,7 +25,7 @@ class interpreter:
                 else:
                     print(flex[1], end='')
             elif flex[0] == "Input":
-                input(flex[1])
+                RtVal = input(flex[1])
             elif flex[0] == "Exec":
                 if flex[1][0] == "$":
                     self.execute_code(self.variables[flex[1]])
@@ -33,6 +36,10 @@ class interpreter:
                     self.execute_script(self.variables[flex[1]])
                 else:
                     self.execute_script(flex[1])
+
+            elif flex[0] == "LoadHeader":
+                with open(flex[1]) as JFile:
+                    self.variables = json.load(JFile)
 
 
             elif flex[0] == "PyExec":
@@ -52,13 +59,23 @@ class interpreter:
             elif flex[0] == "String":
                 self.variables[flex[1]] = ""
 
+            elif flex[0] == "Return":
+                if flex[1][0] == "$":
+                    RtVal = self.variables[flex[1]]
+                else:
+                    RtVal = flex[1]
+
             elif flex[0][0] == "*":
                 repflex = flex[0].replace('*', '$')
-                self.execute_script(self.variables[repflex])
+                return self.execute_script(self.variables[repflex])
 
             elif flex[1] != None:
                 if flex[1] == "is":
-                    self.variables[flex[0]] = flex[2]
+                    if flex[2][0] == '%':
+                        self.execute_code(flex[2].replace("%", ""))
+                        self.variables[flex[0]] = RtVal
+                    else:
+                        self.variables[flex[0]] = flex[2]
             elif flex[0] == '':
                 pass
 
